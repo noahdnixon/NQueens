@@ -8,16 +8,16 @@ using namespace std;
 
 //Header File
 void GeneratePop();
-void DisplayBoard();
-void DisplayPop();
-float AverageFitness();
-void BestCandidate();
-int EvaluateCandidate(int CandToCheck);
-int CheckRows();
-int CheckDiagonals();
 void SortCandidates();
 void Crossover();
 void Mutate();
+void DisplayBoard();
+void DisplayPop();
+void BestCandidate();
+float AverageFitness();
+int EvaluateCandidate(int CandToCheck);
+int CheckRows();
+int CheckDiagonals();
 
 
 //Variables
@@ -41,7 +41,7 @@ uniform_int_distribution<> Favor1(0, 1);
 uniform_int_distribution<> ArrayMake(0, 7);
 
 
-//Struct that contains info for each position on Chess board
+//Struct that contains queen info for each position on Chess board
 struct ChessPos
 {
     int HasQueen;
@@ -54,12 +54,12 @@ struct Candidate
     int TotalConflicts;
 };
 
-//Arrays
+//Arrays for populations and boards
 Candidate Population[PopSize];
 ChessPos Board[RowSize][ColumnSize];
 
 
-//Make an empty Chess board of zeroes
+//Make an empty Chess board of zeroes(no queens)
 void InitializeEmpty()
 {
     for (int i = 0; i < RowSize; i++)
@@ -72,7 +72,7 @@ void InitializeEmpty()
 }
 
 //Generate random numbers from 1-8
-//Put numbers in array
+//Put numbers in population array
 void GeneratePop()
 {
 
@@ -87,7 +87,7 @@ void GeneratePop()
 
 }
 
-//Place numbers from array on board and evaluate attacks
+//Place numbers from array on Chess board and evaluate each direction to get total conflicts for this candidate
 int EvaluateCandidate(int CandToCheck)
 {
     InitializeEmpty();
@@ -218,6 +218,7 @@ int CheckDiagonals()
                 }
                 
             }
+
             DiagTotal += DiagAttacks;
             DiagAttacks = 0;
         }
@@ -268,6 +269,8 @@ void SortCandidates()
     }
 }
 
+//Picks a split point and crosses over random candidates based on that split point
+//Favors picking candidates with less conflicts
 void Crossover()
 {
     int SplitPoint;
@@ -292,7 +295,7 @@ void Crossover()
         //Generate favor to more likely pick better candidates
         Favor = FavorMake(rng);
 
-        //Crossover for each
+        //Lower favor number means more likely to pick candidates with least conflicts
         if(Favor == 4)
         { 
             CrossString1 = Population[ArrayMake(rng)].Values;
@@ -323,6 +326,7 @@ void Crossover()
         cout << "Split Point: " << SplitPoint << endl;
         */
 
+        //Crossover for each
         CrossString1Part1 = CrossString1.substr(0, SplitPoint);
         CrossString1Part2 = CrossString1.substr(SplitPoint);
 
@@ -338,7 +342,7 @@ void Crossover()
         cout << CrossString2 << endl;
         */
 
-        //Add new candidates to array
+        //Add new candidates to population array for next generation
         Population[PopInsert].Values = CrossString1;  
         Population[PopInsert + 1].Values = CrossString2;
         PopInsert += 2;
