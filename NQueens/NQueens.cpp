@@ -139,41 +139,17 @@ int CheckRows()
             if (Board[i][j].HasQueen == 1)
             {
                 NumInThisRow += 1;
+                if (NumInThisRow >= 2)
+                {
+                    RowAttackCount += 1;
+                }
             }
         }
-        
-        if (NumInThisRow == 2)
-        {
-            RowAttackCount += 1;
-        }
-        else if (NumInThisRow == 3)
-        {
-            RowAttackCount += 2;
-        }
-        else if (NumInThisRow == 4)
-        {
-            RowAttackCount += 3;
-        }
-        else if (NumInThisRow == 5)
-        {
-            RowAttackCount += 4;
-        }
-        else if (NumInThisRow == 6)
-        {
-            RowAttackCount += 5;
-        }
-        else if (NumInThisRow == 7)
-        {
-            RowAttackCount += 6;
-        }
-        else if (NumInThisRow == 8)
-        {
-            RowAttackCount += 7;
-        }
+              
         RowAttackTotal += RowAttackCount;
         RowAttackCount = 0;  
         NumInThisRow = 0;
-        
+
     }
     return RowAttackTotal;
 }
@@ -242,7 +218,7 @@ void DisplayBoard()
     cout << endl;
 }
 
-//Display candidates in population with their total conflicts
+//Display candidates in population with total conflicts for each
 void DisplayPop()
 {
     cout << endl;
@@ -318,7 +294,7 @@ void Crossover()
         }
         
 
-        /*Debug
+        /* Debug
         cout << "\nCandidates chosen:" << endl;
         cout << CrossString1 << endl;
         cout << CrossString2 << endl;
@@ -326,7 +302,7 @@ void Crossover()
         cout << "Split Point: " << SplitPoint << endl;
         */
 
-        //Crossover for each
+        //Crossover for each at split point
         CrossString1Part1 = CrossString1.substr(0, SplitPoint);
         CrossString1Part2 = CrossString1.substr(SplitPoint);
 
@@ -347,6 +323,12 @@ void Crossover()
         Population[PopInsert + 1].Values = CrossString2;
         PopInsert += 2;
     }
+
+    //Evaluate candidates in new population for display purposes
+    for (int j = 0; j < PopSize; j++)
+    {
+        EvaluateCandidate(j);
+    }
 }
 
 
@@ -363,6 +345,12 @@ void Mutate()
 
         }
     }
+
+    //Evaluate candidates in new mutated population for display purposes
+    for (int j = 0; j < PopSize; j++)
+    {
+        EvaluateCandidate(j);
+    }
 }
 
 //Check and return average fitness of population
@@ -374,7 +362,7 @@ float AverageFitness()
         Total += Population[i].TotalConflicts;
     }
 
-    return Total / 8.0f;
+    return Total / (float)PopSize;
 }
 
 //Check population for new best candidate
@@ -392,8 +380,8 @@ void BestCandidate()
 
 int main()
 {
-
-    cout << "Initial Population" << endl;
+    //Show average fitness and best candidate found over 1000 generations
+   /* cout << "Initial Population" << endl;
     GeneratePop();
     for (int c = 0; c < 1000; c++)
     {
@@ -417,11 +405,11 @@ int main()
         Mutate();
     }
     cout << "\n Final Population" << endl;
-    DisplayPop();
+    DisplayPop();*/
 
     //Show entire process for one generation
-    /*
-    cout << "Generating Population..." << endl;
+    
+    cout << "Generating population..." << endl;
     GeneratePop();
 
         for (int i = 0; i < PopSize; i++)
@@ -431,20 +419,20 @@ int main()
 
         SortCandidates();
 
-        cout << "\nEvaluate and Sort Candidates..." << endl;
+        cout << "\nEvaluate and Sort candidates..." << endl;
         DisplayPop();
 
         Crossover();
 
-        cout << "\nCrossover Candidates for Next Generation..." << endl;
+        cout << "\nCrossover candidates for next generation..." << endl;
         DisplayPop();
 
 
         Mutate();
 
-        cout << "\nMutate New Population..." << endl;
+        cout << "\nMutate new population..." << endl;
         DisplayPop();
-    */
+    
 
 }
 
